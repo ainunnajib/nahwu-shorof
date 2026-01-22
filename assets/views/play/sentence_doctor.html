@@ -1,0 +1,245 @@
+{% extends "partials/base.html" %}
+
+{% block title %}{{ game_name }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <!-- Back Button -->
+    <a href="/play?lang={{ lang }}" class="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        {{ button_back }}
+    </a>
+
+    <!-- Game Setup Screen -->
+    <div id="game-setup" class="text-center">
+        <div class="w-20 h-20 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+        </div>
+
+        <h1 class="text-3xl font-bold mb-2">{{ game_name }}</h1>
+        <p class="text-gray-400 mb-8">{{ game_description }}</p>
+
+        <div class="card text-left mb-8">
+            <h3 class="font-semibold mb-3">{% if lang == "ar" %}طريقة اللعب:{% elif lang == "en" %}How to Play:{% else %}Cara Bermain:{% endif %}</h3>
+            <ol class="space-y-2 text-gray-300">
+                {% for step in how_to_play %}
+                <li class="flex items-start gap-2">
+                    <span class="text-teal-500">{{ loop.index }}.</span>
+                    {{ step }}
+                </li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        <div class="card text-left mb-8">
+            <h3 class="font-semibold mb-3">{% if lang == "ar" %}مواضيع الإعراب:{% elif lang == "en" %}I'rab Topics:{% else %}Topik I'rab:{% endif %}</h3>
+            <div class="space-y-2">
+                {% for topic in irab_topics %}
+                <label class="flex items-center gap-2 text-blue-400">
+                    <input type="checkbox" checked class="rounded" value="{{ topic.0 }}">
+                    {{ topic.1 }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <p class="text-gray-500 mb-4">📝 10 {% if lang == "ar" %}أسئلة{% elif lang == "en" %}questions{% else %}soal{% endif %}</p>
+
+        <button onclick="startGame()" class="btn-primary flex items-center gap-2 mx-auto">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+            </svg>
+            {{ game_start }}
+        </button>
+    </div>
+
+    <!-- Game Play Screen -->
+    <div id="game-play" class="hidden">
+        <!-- Progress -->
+        <div class="flex items-center justify-between mb-4 text-sm text-gray-400">
+            <span id="progress-text"></span>
+            <span>{% if lang == "ar" %}النتيجة{% elif lang == "en" %}Score{% else %}Skor{% endif %}: <span id="score" class="text-teal-400 font-bold">0</span></span>
+        </div>
+        <div class="progress-bar h-2 mb-8">
+            <div id="progress-bar" class="progress-fill" style="width: 10%"></div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="card mb-6">
+            <div class="flex items-center justify-center mb-4">
+                <div class="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <p class="text-center text-gray-400 mb-4">{{ instruction }}</p>
+
+            <!-- Sentence Display -->
+            <div class="bg-gray-800 rounded-lg p-4 mb-6">
+                <p id="sentence" class="arabic-text text-2xl text-center" dir="rtl"></p>
+            </div>
+
+            <!-- Options -->
+            <p class="text-center text-gray-400 mb-3">{% if lang == "ar" %}اختر الكلمة الصحيحة:{% elif lang == "en" %}Choose the correct word:{% else %}Pilih kata yang benar:{% endif %}</p>
+            <div id="options" class="grid grid-cols-3 gap-3 mb-4">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <button onclick="checkAnswer()" id="check-btn" class="w-full btn-primary" disabled>
+                {{ button_check }}
+            </button>
+        </div>
+
+        <!-- Explanation (shown after answer) -->
+        <div id="explanation" class="card hidden">
+            <h3 class="font-semibold mb-2">{% if lang == "ar" %}الشرح{% elif lang == "en" %}Explanation{% else %}Penjelasan{% endif %}</h3>
+            <p id="explanation-text" class="text-gray-300"></p>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="game-results" class="hidden text-center">
+        <h2 class="text-2xl font-bold mb-4">{% if lang == "ar" %}نتيجة اللعبة{% elif lang == "en" %}Game Results{% else %}Hasil Permainan{% endif %}</h2>
+        <div class="card mb-6">
+            <div class="text-6xl font-bold text-teal-400 mb-2" id="final-score">0/10</div>
+            <div class="flex justify-center gap-1 text-3xl mb-4" id="stars"></div>
+            <p id="result-message" class="text-gray-400"></p>
+        </div>
+        <div class="flex gap-4 justify-center">
+            <button onclick="location.reload()" class="btn-outline">
+                {% if lang == "ar" %}حاول مرة أخرى{% elif lang == "en" %}Try Again{% else %}Coba Lagi{% endif %}
+            </button>
+            <a href="/play?lang={{ lang }}" class="btn-primary">
+                {% if lang == "ar" %}رجوع{% elif lang == "en" %}Back{% else %}Kembali{% endif %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const lang = '{{ lang }}';
+let questions = [];
+let currentQuestion = 0;
+let score = 0;
+let selectedOption = null;
+
+async function startGame() {
+    const response = await fetch('/api/games/sentence-doctor/questions?count=10');
+    const data = await response.json();
+    questions = data.data;
+
+    document.getElementById('game-setup').classList.add('hidden');
+    document.getElementById('game-play').classList.remove('hidden');
+
+    loadQuestion();
+}
+
+function loadQuestion() {
+    const q = questions[currentQuestion];
+
+    // Display sentence with error highlighted
+    const words = q.incorrect_sentence.split(' ');
+    const highlighted = words.map((word, i) =>
+        i === q.error_position ? `<span class="text-red-400">${word}</span>` : word
+    ).join(' ');
+    document.getElementById('sentence').innerHTML = highlighted;
+
+    // Create option buttons
+    const optionsContainer = document.getElementById('options');
+    optionsContainer.innerHTML = '';
+    q.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'bg-gray-700 hover:bg-gray-600 rounded-lg p-3 arabic-text text-xl transition';
+        btn.textContent = option;
+        btn.onclick = () => selectOption(btn, option);
+        optionsContainer.appendChild(btn);
+    });
+
+    selectedOption = null;
+    document.getElementById('check-btn').disabled = true;
+    document.getElementById('explanation').classList.add('hidden');
+    updateProgress();
+}
+
+function selectOption(btn, option) {
+    document.querySelectorAll('#options button').forEach(b => {
+        b.classList.remove('ring-2', 'ring-teal-500');
+    });
+    btn.classList.add('ring-2', 'ring-teal-500');
+    selectedOption = option;
+    document.getElementById('check-btn').disabled = false;
+}
+
+function checkAnswer() {
+    const q = questions[currentQuestion];
+    const correctWord = q.options[0]; // First option is always correct
+
+    const isCorrect = selectedOption === correctWord;
+    if (isCorrect) score++;
+
+    // Show explanation
+    const explanationText = lang === 'ar' ? q.explanation_ar :
+                           lang === 'en' ? q.explanation_en : q.explanation_id;
+    document.getElementById('explanation-text').textContent = explanationText;
+    document.getElementById('explanation').classList.remove('hidden');
+
+    // Highlight correct/incorrect
+    document.querySelectorAll('#options button').forEach(btn => {
+        if (btn.textContent === correctWord) {
+            btn.classList.add('bg-green-600');
+        } else if (btn.textContent === selectedOption && !isCorrect) {
+            btn.classList.add('bg-red-600');
+        }
+        btn.disabled = true;
+    });
+
+    // Move to next question after delay
+    setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }, 2000);
+}
+
+function updateProgress() {
+    const text = lang === 'ar' ? `السؤال ${currentQuestion + 1} من ${questions.length}` :
+                 lang === 'en' ? `Question ${currentQuestion + 1} of ${questions.length}` :
+                 `Soal ${currentQuestion + 1} dari ${questions.length}`;
+    document.getElementById('progress-text').textContent = text;
+    document.getElementById('score').textContent = score;
+    document.getElementById('progress-bar').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+}
+
+function showResults() {
+    document.getElementById('game-play').classList.add('hidden');
+    document.getElementById('game-results').classList.remove('hidden');
+
+    document.getElementById('final-score').textContent = `${score}/${questions.length}`;
+
+    const percentage = (score / questions.length) * 100;
+    const stars = percentage >= 90 ? 3 : percentage >= 70 ? 2 : percentage >= 50 ? 1 : 0;
+    document.getElementById('stars').innerHTML =
+        '<span class="star">★</span>'.repeat(stars) +
+        '<span class="star-empty">☆</span>'.repeat(3 - stars);
+
+    const messages = {
+        3: { ar: 'ممتاز!', en: 'Excellent!', id: 'Luar Biasa!' },
+        2: { ar: 'جيد!', en: 'Good!', id: 'Bagus!' },
+        1: { ar: 'استمر!', en: 'Keep trying!', id: 'Terus Semangat!' },
+        0: { ar: 'حاول مرة أخرى', en: 'Try again', id: 'Coba lagi' }
+    };
+    document.getElementById('result-message').textContent = messages[stars][lang] || messages[stars].id;
+}
+</script>
+{% endblock %}

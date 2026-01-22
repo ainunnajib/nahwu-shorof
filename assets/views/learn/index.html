@@ -1,0 +1,91 @@
+{% extends "partials/base.html" %}
+
+{% block title %}{{ nav_learn }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Page Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold mb-2">{{ page_title }}</h1>
+        <p class="text-gray-400">{{ page_subtitle }}</p>
+    </div>
+
+    <!-- Nahwu Section -->
+    <div class="mb-8">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"></path>
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold">{{ topic_nahwu }}</h2>
+                <p class="text-sm text-gray-400">{{ topic_nahwu_desc }}</p>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            {% for topic in nahwu_topics %}
+            <a href="/learn/nahwu/{{ topic.id }}?lang={{ lang }}"
+               class="card flex items-center gap-4 hover:bg-gray-700/50 transition {% if topic.locked %}opacity-50 pointer-events-none{% endif %}">
+                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center font-bold">
+                    {{ topic.order }}
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-semibold">{{ topic.title }}</h3>
+                    <p class="text-sm text-gray-400">{{ topic.description }}</p>
+                </div>
+                {% if topic.locked %}
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                {% else %}
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Shorof Section -->
+    <div>
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"></path>
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold">{{ topic_shorof }}</h2>
+                <p class="text-sm text-gray-400">{{ topic_shorof_desc }}</p>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            {% for topic in shorof_topics %}
+            <a href="/learn/shorof/{{ topic.id }}?lang={{ lang }}"
+               class="card flex items-center gap-4 hover:bg-gray-700/50 transition {% if topic.locked %}opacity-50 pointer-events-none{% endif %}">
+                <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center font-bold">
+                    {{ topic.order }}
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-semibold">{{ topic.title }}</h3>
+                    <p class="text-sm text-gray-400">{{ topic.description }}</p>
+                </div>
+                {% if topic.locked %}
+                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                {% else %}
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

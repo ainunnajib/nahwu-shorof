@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{% if lang == 'ar' %}rtl{% else %}ltr{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ app_name }}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #14b8a6;
+            --primary-dark: #0d9488;
+            --bg-dark: #1a1a2e;
+            --bg-darker: #16213e;
+            --card-bg: #1f2937;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            min-height: 100vh;
+        }
+        .arabic-text {
+            font-family: 'Amiri', serif;
+            font-size: 1.5rem;
+            line-height: 2;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.75rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .nav-link {
+            color: #9ca3af;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background: rgba(20, 184, 166, 0.1);
+        }
+        .progress-bar {
+            background: #374151;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: var(--primary);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .star {
+            color: #fbbf24;
+        }
+        .star-empty {
+            color: #4b5563;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body class="text-white">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-gray-900/90 backdrop-blur-sm border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="/?lang={{ lang }}" class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center font-bold">أ</div>
+                    <span class="font-bold text-lg">{{ app_name }}</span>
+                </a>
+
+                <!-- Nav Links -->
+                <div class="hidden md:flex items-center gap-2">
+                    <a href="/?lang={{ lang }}" class="nav-link {% if page == 'home' %}active{% endif %}">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            {{ nav_home }}
+                        </span>
+                    </a>
+                    <a href="/play?lang={{ lang }}" class="nav-link {% if page == 'play' %}active{% endif %}">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ nav_play }}
+                        </span>
+                    </a>
+                    <a href="/learn?lang={{ lang }}" class="nav-link {% if page == 'learn' %}active{% endif %}">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                            {{ nav_learn }}
+                        </span>
+                    </a>
+                    <a href="/profile?lang={{ lang }}" class="nav-link {% if page == 'profile' %}active{% endif %}">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            {{ nav_profile }}
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Language Switcher -->
+                <div class="flex items-center gap-2">
+                    <a href="?lang=id" class="px-3 py-1 rounded-full text-sm {% if lang == 'id' %}bg-teal-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">ID</a>
+                    <a href="?lang=ar" class="px-3 py-1 rounded-full text-sm {% if lang == 'ar' %}bg-teal-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">ع</a>
+                    <a href="?lang=en" class="px-3 py-1 rounded-full text-sm {% if lang == 'en' %}bg-teal-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">EN</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Mobile Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800">
+        <div class="flex justify-around py-2">
+            <a href="/?lang={{ lang }}" class="flex flex-col items-center p-2 {% if page == 'home' %}text-teal-500{% else %}text-gray-400{% endif %}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <span class="text-xs">{{ nav_home }}</span>
+            </a>
+            <a href="/play?lang={{ lang }}" class="flex flex-col items-center p-2 {% if page == 'play' %}text-teal-500{% else %}text-gray-400{% endif %}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                </svg>
+                <span class="text-xs">{{ nav_play }}</span>
+            </a>
+            <a href="/learn?lang={{ lang }}" class="flex flex-col items-center p-2 {% if page == 'learn' %}text-teal-500{% else %}text-gray-400{% endif %}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                <span class="text-xs">{{ nav_learn }}</span>
+            </a>
+            <a href="/profile?lang={{ lang }}" class="flex flex-col items-center p-2 {% if page == 'profile' %}text-teal-500{% else %}text-gray-400{% endif %}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span class="text-xs">{{ nav_profile }}</span>
+            </a>
+        </div>
+    </nav>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,48 @@
+{% extends "partials/base.html" %}
+
+{% block title %}{{ app_name }} - {{ app_tagline }}{% endblock %}
+
+{% block content %}
+<div class="text-center py-12">
+    <!-- Bismillah Badge -->
+    <div class="inline-block bg-teal-500/20 text-teal-400 px-4 py-2 rounded-full text-sm mb-6 arabic-text">
+        بسم الله
+    </div>
+
+    <!-- Hero Title -->
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">{{ app_name }}</h1>
+    <p class="text-gray-400 text-lg mb-8">{{ app_tagline }}</p>
+
+    <!-- CTA Buttons -->
+    <div class="flex flex-wrap justify-center gap-4 mb-16">
+        <a href="/play?lang={{ lang }}" class="btn-primary flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+            </svg>
+            {{ game_start }}
+        </a>
+        <a href="/learn?lang={{ lang }}" class="btn-outline flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            {{ nav_learn_btn }}
+        </a>
+    </div>
+
+    <!-- Example Sentences -->
+    <div class="max-w-2xl mx-auto space-y-6">
+        {% for example in examples %}
+        <div class="card text-center">
+            <p class="arabic-text text-2xl text-teal-400 mb-3" dir="rtl">{{ example.arabic }}</p>
+            <p class="text-gray-300 mb-2">{{ example.translation }}</p>
+            <div class="flex items-center justify-center gap-2 text-sm text-gray-500">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span>{{ example.type }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "partials/base.html" %}
+
+{% block title %}{{ lesson.title }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Back Button -->
+    <a href="/learn?lang={{ lang }}" class="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        {{ button_back }}
+    </a>
+
+    <!-- Category Badge -->
+    <span class="inline-block bg-{% if category == 'nahwu' %}blue{% else %}green{% endif %}-500/20 text-{% if category == 'nahwu' %}blue{% else %}green{% endif %}-400 px-3 py-1 rounded-full text-sm mb-4">
+        {% if category == "nahwu" %}Nahwu{% else %}Shorof{% endif %}
+    </span>
+
+    <!-- Title -->
+    <h1 class="text-3xl font-bold mb-2">{{ lesson.title }}</h1>
+    <p class="text-gray-400 mb-8">{{ lesson.description }}</p>
+
+    <!-- Lesson Content -->
+    <div class="space-y-6">
+        {% for section in lesson.sections %}
+        <div class="card">
+            {% if section.section_type == "explanation" %}
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex-shrink-0 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    {% if section.title %}<h3 class="font-semibold text-lg mb-2">{{ section.title }}</h3>{% endif %}
+                    <p class="text-gray-300">{{ section.content }}</p>
+                </div>
+            </div>
+
+            {% elif section.section_type == "example" %}
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 bg-yellow-500/20 rounded-lg flex-shrink-0 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    {% if section.title %}<h3 class="font-semibold text-lg mb-2">{{ section.title }}</h3>{% endif %}
+                    <p class="text-gray-300 mb-4">{{ section.content }}</p>
+
+                    {% if section.arabic_example %}
+                    <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                        <p class="arabic-text text-2xl text-teal-400 text-center" dir="rtl">{{ section.arabic_example }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if section.breakdown %}
+                    <div class="space-y-2">
+                        {% for word in section.breakdown %}
+                        <div class="bg-gray-800/50 rounded-lg p-3 flex items-start gap-3">
+                            <div>
+                                <span class="arabic-text text-xl text-teal-300">{{ word.word }}</span>
+                                <span class="text-sm text-teal-500 ml-2">{{ word.role }}</span>
+                            </div>
+                            <p class="text-sm text-gray-400 flex-1">{{ word.explanation }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% elif section.section_type == "rule" %}
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 bg-green-500/20 rounded-lg flex-shrink-0 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    {% if section.title %}<h3 class="font-semibold text-lg mb-2">{{ section.title }}</h3>{% endif %}
+                    <div class="text-gray-300 whitespace-pre-line">{{ section.content }}</div>
+                </div>
+            </div>
+
+            {% elif section.section_type == "practice" %}
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex-shrink-0 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    {% if section.title %}<h3 class="font-semibold text-lg mb-2">{{ section.title }}</h3>{% endif %}
+                    <p class="text-gray-300 mb-4">{{ section.content }}</p>
+
+                    <a href="/play/{% if category == 'nahwu' %}sentence-doctor{% else %}word-builder{% endif %}?lang={{ lang }}" class="btn-primary inline-flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        </svg>
+                        {% if category == "nahwu" %}{{ game_sentence_doctor }}{% else %}{{ game_word_builder }}{% endif %}
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex justify-between items-center mt-8 pt-8 border-t border-gray-800">
+        <a href="/learn?lang={{ lang }}" class="btn-outline">
+            {{ button_back }}
+        </a>
+    </div>
+</div>
+{% endblock %}

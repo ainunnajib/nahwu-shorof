@@ -121,6 +121,6 @@ pub fn routes() -> Routes {
     Routes::new()
         .prefix("/learn")
         .add("/", get(index))
-        .add("/nahwu/:topic_id", get(nahwu_topic))
-        .add("/shorof/:topic_id", get(shorof_topic))
+        .add("/nahwu/{topic_id}", get(nahwu_topic))
+        .add("/shorof/{topic_id}", get(shorof_topic))
 }

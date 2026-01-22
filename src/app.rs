@@ -1,15 +1,16 @@
 use async_trait::async_trait;
 use loco_rs::{
     app::{AppContext, Hooks, Initializer},
+    bgworker::Queue,
     boot::{create_app, BootResult, StartMode},
+    config::Config,
     controller::AppRoutes,
-    db::{self, truncate_table},
     environment::Environment,
     task::Tasks,
     Result,
 };
 use migration::Migrator;
-use sea_orm::DatabaseConnection;
+use std::path::Path;
 
 use crate::controllers;
 
@@ -31,8 +32,8 @@ impl Hooks for App {
         )
     }
 
-    async fn boot(mode: StartMode, environment: &Environment) -> Result<BootResult> {
-        create_app::<Self, Migrator>(mode, environment).await
+    async fn boot(mode: StartMode, environment: &Environment, config: Config) -> Result<BootResult> {
+        create_app::<Self, Migrator>(mode, environment, config).await
     }
 
     async fn initializers(_ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
@@ -48,28 +49,19 @@ impl Hooks for App {
             .add_route(controllers::api::routes())
     }
 
-    async fn connect_workers(_ctx: &AppContext, _queue: &loco_rs::bgworker::Queue) -> Result<()> {
+    async fn connect_workers(_ctx: &AppContext, _queue: &Queue) -> Result<()> {
         Ok(())
     }
 
-    fn register_tasks(tasks: &mut Tasks) {
-        // Register seed task
-        tasks.register(crate::controllers::seed_task());
+    fn register_tasks(_tasks: &mut Tasks) {
+        // No custom tasks
     }
 
-    async fn truncate(db: &DatabaseConnection) -> Result<()> {
-        truncate_table(db, "users").await?;
-        truncate_table(db, "topics").await?;
-        truncate_table(db, "progress").await?;
-        truncate_table(db, "game_sessions").await?;
-        truncate_table(db, "achievements").await?;
-        truncate_table(db, "user_achievements").await?;
+    async fn truncate(_ctx: &AppContext) -> Result<()> {
         Ok(())
     }
 
-    async fn seed(db: &DatabaseConnection, base: &std::path::Path) -> Result<()> {
-        db::seed::<crate::models::users::ActiveModel>(db, &base.join("users.yaml")).await?;
-        db::seed::<crate::models::topics::ActiveModel>(db, &base.join("topics.yaml")).await?;
+    async fn seed(_ctx: &AppContext, _base: &Path) -> Result<()> {
         Ok(())
     }
 }

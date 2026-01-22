@@ -105,5 +105,5 @@ pub fn t(key: &str, lang: &str) -> &'static str {
         .get(key)
         .and_then(|m| m.get(lang).or_else(|| m.get("en")))
         .copied()
-        .unwrap_or(key)
+        .unwrap_or("[missing]")
 }
